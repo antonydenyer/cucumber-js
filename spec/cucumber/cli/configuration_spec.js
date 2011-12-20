@@ -109,6 +109,23 @@ describe("Cucumber.Cli.Configuration", function() {
     });
   });
 
+  describe("requestedFormatter()", function() {
+    beforeEach(function() {
+      spyOnStub(argumentParser, 'requestedFormatter');
+    });
+
+    it("asks the argument parser which formatter was requested", function() {
+      configuration.requestedFormatter();
+      expect(argumentParser.requestedFormatter).toHaveBeenCalled();
+    });
+
+    it("returns the answer from the argument parser", function() {
+      var requestedFormatter = createSpy("requested formatter");
+      argumentParser.requestedFormatter.andReturn(requestedFormatter);
+      expect(configuration.requestedFormatter()).toBe(requestedFormatter);
+    });
+  });
+
   describe("isVersionRequired()", function() {
     beforeEach(function() {
       spyOnStub(argumentParser, 'isVersionRequested');
