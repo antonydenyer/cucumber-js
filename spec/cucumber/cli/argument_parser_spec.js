@@ -58,6 +58,21 @@ describe("Cucumber.Cli.ArgumentParser", function() {
       var knownOptionDefinitions = argumentParser.getKnownOptionDefinitions();
       expect(knownOptionDefinitions[Cucumber.Cli.ArgumentParser.REQUIRE_OPTION_NAME]).toEqual([path, Array]);
     });
+
+    it("defines a --format option to specify a custom formatter", function() {
+      var knownOptionDefinitions = argumentParser.getKnownOptionDefinitions();
+      expect(knownOptionDefinitions[Cucumber.Cli.ArgumentParser.FORMAT_OPTION_NAME]).toEqual(String);
+    });
+
+    it("defines a --help flag", function() {
+      var knownOptionDefinitions = argumentParser.getKnownOptionDefinitions();
+      expect(knownOptionDefinitions[Cucumber.Cli.ArgumentParser.HELP_FLAG_NAME]).toEqual(Boolean);
+    });
+
+    it("defines a --version flag", function() {
+      var knownOptionDefinitions = argumentParser.getKnownOptionDefinitions();
+      expect(knownOptionDefinitions[Cucumber.Cli.ArgumentParser.VERSION_FLAG_NAME]).toEqual(Boolean);
+    });
   });
 
   describe("getShortenedOptionDefinitions()", function() {
@@ -66,9 +81,25 @@ describe("Cucumber.Cli.ArgumentParser", function() {
       expect(typeof(shortenedOptionDefinitions)).toBe('object');
     });
 
-    it("defines an alias to to --require as -r", function() {
+    it("defines an alias to --require as -r", function() {
       var optionName = Cucumber.Cli.ArgumentParser.LONG_OPTION_PREFIX + Cucumber.Cli.ArgumentParser.REQUIRE_OPTION_NAME;
       var aliasName  = Cucumber.Cli.ArgumentParser.REQUIRE_OPTION_SHORT_NAME;
+      var aliasValue = [optionName];
+      var shortenedOptionDefinitions = argumentParser.getShortenedOptionDefinitions();
+      expect(shortenedOptionDefinitions[aliasName]).toEqual(aliasValue);
+    });
+
+    it("defines an alias to --format as -f", function() {
+      var optionName = Cucumber.Cli.ArgumentParser.LONG_OPTION_PREFIX + Cucumber.Cli.ArgumentParser.FORMAT_OPTION_NAME;
+      var aliasName  = Cucumber.Cli.ArgumentParser.FORMAT_OPTION_SHORT_NAME;
+      var aliasValue = [optionName];
+      var shortenedOptionDefinitions = argumentParser.getShortenedOptionDefinitions();
+      expect(shortenedOptionDefinitions[aliasName]).toEqual(aliasValue);
+    });
+
+    it("defines an alias to --help as -h", function() {
+      var optionName = Cucumber.Cli.ArgumentParser.LONG_OPTION_PREFIX + Cucumber.Cli.ArgumentParser.HELP_FLAG_NAME;
+      var aliasName  = Cucumber.Cli.ArgumentParser.HELP_FLAG_SHORT_NAME;
       var aliasValue = [optionName];
       var shortenedOptionDefinitions = argumentParser.getShortenedOptionDefinitions();
       expect(shortenedOptionDefinitions[aliasName]).toEqual(aliasValue);
@@ -218,6 +249,42 @@ describe("Cucumber.Cli.ArgumentParser", function() {
 
     it("returns the unexpanded support code file paths", function() {
       expect(argumentParser.getUnexpandedSupportCodeFilePaths()).toBe(unexpandedSupportCodeFilePaths);
+    });
+  });
+
+  describe("isHelpRequested()", function() {
+    var isHelpRequested;
+
+    beforeEach(function() {
+      isHelpRequested = createSpy("is help requested?");
+      spyOn(argumentParser, 'getOptionOrDefault').andReturn(isHelpRequested);
+    });
+
+    it("gets the 'help' flag with a default value", function() {
+      argumentParser.isHelpRequested();
+      expect(argumentParser.getOptionOrDefault).toHaveBeenCalledWith(Cucumber.Cli.ArgumentParser.HELP_FLAG_NAME, Cucumber.Cli.ArgumentParser.DEFAULT_HELP_FLAG_VALUE);
+    });
+
+    it("returns the flag value", function() {
+      expect(argumentParser.isHelpRequested()).toBe(isHelpRequested);
+    });
+  });
+
+  describe("isVersionRequested()", function() {
+    var isVersionRequested;
+
+    beforeEach(function() {
+      isVersionRequested = createSpy("is version requested?");
+      spyOn(argumentParser, 'getOptionOrDefault').andReturn(isVersionRequested);
+    });
+
+    it("gets the 'version' flag with a default value", function() {
+      argumentParser.isVersionRequested();
+      expect(argumentParser.getOptionOrDefault).toHaveBeenCalledWith(Cucumber.Cli.ArgumentParser.VERSION_FLAG_NAME, Cucumber.Cli.ArgumentParser.DEFAULT_VERSION_FLAG_VALUE);
+    });
+
+    it("returns the flag value", function() {
+      expect(argumentParser.isVersionRequested()).toBe(isVersionRequested);
     });
   });
 
