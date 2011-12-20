@@ -48,3 +48,5 @@ Feature: Background
 
   # TODO: failing background steps, failing scenario steps...
 
+Scenario: another scenario
+    Given something is pending
